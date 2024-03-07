@@ -73,7 +73,7 @@ func InsertProduct(w http.ResponseWriter, r *http.Request) {
 	name := r.Form.Get("name")
 	price, _ := strconv.Atoi(r.Form.Get("price"))
 
-	_, errQuery := db.Exec("INSERT INTO users(name, price) values (?,?)",
+	_, errQuery := db.Exec("INSERT INTO products(name, price) values (?,?)",
 		name,
 		price,
 	)
@@ -116,10 +116,53 @@ func DeleteProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 // UpdateProduct (GORM)
+// func UpdateProduct(w http.ResponseWriter, r *http.Request) {
+// 	db := conn()
+
+// 	// Parse parameters
+// 	idParam := r.URL.Query().Get("id")
+// 	id, err := strconv.Atoi(idParam)
+// 	if err != nil {
+// 		http.Error(w, "Invalid ID", http.StatusBadRequest)
+// 		return
+// 	}
+
+// 	// Read from Request Body
+// 	var updateData map[string]interface{}
+// 	err = json.NewDecoder(r.Body).Decode(&updateData)
+// 	if err != nil {
+// 		http.Error(w, "Invalid JSON data", http.StatusBadRequest)
+// 		return
+// 	}
+
+// 	// Update product di database
+// 	var product m.Product
+// 	result := db.First(&product, id)
+// 	if result.Error != nil {
+// 		http.Error(w, "Product not found", http.StatusNotFound)
+// 		return
+// 	}
+
+// 	// Update fields yang diterima dari body request
+// 	if name, ok := updateData["name"].(string); ok {
+// 		product.Name = name
+// 	}
+// 	if price, ok := updateData["price"].(int); ok {
+// 		product.Price = price
+// 	}
+
+// 	// Simpan perubahan ke dalam database
+// 	db.Save(&product)
+
+// 	// Berikan respons
+// 	response := m.ProductResponse{Status: http.StatusOK, Message: "Product updated successfully"}
+// 	w.Header().Set("Content-Type", "application/json")
+// 	json.NewEncoder(w).Encode(response)
+// }
+
 func UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	db := conn()
 
-	// Parse parameters
 	idParam := r.URL.Query().Get("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
@@ -127,35 +170,29 @@ func UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Read from Request Body
-	var updateData map[string]interface{}
-	err = json.NewDecoder(r.Body).Decode(&updateData)
-	if err != nil {
-		http.Error(w, "Invalid JSON data", http.StatusBadRequest)
-		return
-	}
-
-	// Update product di database
 	var product m.Product
+
 	result := db.First(&product, id)
-	if result.Error != nil {
-		http.Error(w, "Product not found", http.StatusNotFound)
+	err = result.Error
+
+	if err != nil {
+		sendErrorResponse(w)
+	}
+
+	name := r.URL.Query().Get("name")
+	price := r.URL.Query().Get("price")
+	priceInt, err := strconv.Atoi(price)
+	if err != nil {
+		sendErrorResponse(w)
 		return
 	}
 
-	// Update fields yang diterima dari body request
-	if name, ok := updateData["name"].(string); ok {
-		product.Name = name
-	}
-	if price, ok := updateData["price"].(int); ok {
-		product.Price = price
-	}
+	product.Name = name
+	product.Price = priceInt
 
-	// Simpan perubahan ke dalam database
-	db.Save(&product)
-
-	// Berikan respons
-	response := m.ProductResponse{Status: http.StatusOK, Message: "Product updated successfully"}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	if err := db.Save(&product).Error; err != nil {
+		sendErrorResponse(w)
+		return
+	}
+	sendSuccessResponse(w)
 }

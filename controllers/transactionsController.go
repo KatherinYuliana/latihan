@@ -74,7 +74,7 @@ func InsertTransaction(w http.ResponseWriter, r *http.Request) {
 	productId, _ := strconv.Atoi(r.Form.Get("productId"))
 	quantity, _ := strconv.Atoi(r.Form.Get("quantity"))
 
-	_, errQuery := db.Exec("INSERT INTO users(userId, productId, quantity) values (?,?,?)",
+	_, errQuery := db.Exec("INSERT INTO transactions(userId, productId, quantity) values (?,?,?)",
 		userId,
 		productId,
 		quantity,

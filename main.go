@@ -20,19 +20,19 @@ func main() {
 	router.HandleFunc("/users", controllers.GetAllUsers).Methods("GET")
 	router.HandleFunc("/users", controllers.InsertUser).Methods("POST")
 	router.HandleFunc("/users", controllers.DeleteUser).Methods("PUT")
-	router.HandleFunc("/users/{user_id}", controllers.DeleteUser).Methods("PUT")
+	router.HandleFunc("/users/{user_id}", controllers.DeleteUser).Methods("DELETE")
 
 	// products
 	router.HandleFunc("/products", controllers.GetAllProducts).Methods("GET")
 	router.HandleFunc("/products", controllers.InsertProduct).Methods("POST")
 	router.HandleFunc("/products", controllers.DeleteProduct).Methods("PUT")
-	router.HandleFunc("/products/{product_id}", controllers.DeleteProduct).Methods("PUT")
+	router.HandleFunc("/products/{product_id}", controllers.DeleteProduct).Methods("DELETE")
 
 	// transactions
 	router.HandleFunc("/transactions", controllers.GetAllTransactions).Methods("GET")
 	router.HandleFunc("/transactions", controllers.InsertTransaction).Methods("POST")
 	router.HandleFunc("/transactions", controllers.DeleteTransaction).Methods("PUT")
-	router.HandleFunc("/transactions/{transaction_id}", controllers.DeleteTransaction).Methods("PUT")
+	router.HandleFunc("/transactions/{transaction_id}", controllers.DeleteTransaction).Methods("DELETE")
 
 	// detail transaction
 	router.HandleFunc("/transactions", controllers.GetDetailUserTransaction).Methods("GET")
