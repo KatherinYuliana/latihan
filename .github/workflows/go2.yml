@@ -1,16 +1,38 @@
-name: Test
+name: Go Dependency Submission
 on:
-  pull_request:
-    types: [edited, opened]
+  push:
+    branches:
+      - main
+
+# The API requires write permission on the repository to submit dependencies
+permissions:
+  contents: write
+
+# Environment variables to configure Go and Go modules. Customize as necessary
 env:
-  GO_VERSION: "1.21.6"
+  GOPROXY: '' # A Go Proxy server to be used
+  GOPRIVATE: '' # A list of modules are considered private and not requested from GOPROXY
+
 jobs:
-  test:
-    name: Test
+  go-action-detection:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Go pull request message linter
-        uses: masahiro331/go-commitlinter@0.1.1
-        env:
-          TITLE: ${{ github.event.pull_request.title }}
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-go@v3
+        with:
+          go-version: ">=1.18.0"
+
+      - name: Run snapshot action
+        uses: actions/go-dependency-submission@v2
+        with:
+            # Required: Define the repo path to the go.mod file used by the
+            # build target
+            go-mod-path: go-example/go.mod
+            #
+            # Optional: Define the path of a build target (a file with a
+            # `main()` function) If not defined, this Action will collect all
+            # dependencies used by all build targets for the module, which may
+            # include Go dependencies used by tests and tooling.
+            go-build-target: go-example/cmd/octocat.go
