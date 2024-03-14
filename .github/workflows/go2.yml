@@ -1,14 +1,12 @@
-name: google notify
-on:
-  pull_request:
-    types: [opened, reopened, closed]
-  pull_request_review_comment:
-    types: [created]
+name: Sample workflow using golang-security-action
+
+on: [push, pull_request]
+
 jobs:
-  notify:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Google Chat Notification
-      uses: CommonMarvel/google-chat-notification@v1.1.1
-      with:
-        url: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
+    golang-security-action:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v1
+            - uses: ynniss/golang-security-action@master
+              with:
+                CODE_PATH: "./src/"
