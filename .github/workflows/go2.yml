@@ -1,33 +1,14 @@
-name: Google chat notif
-
+name: google notify
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
-
+    types: [opened, reopened, closed]
+  pull_request_review_comment:
+    types: [created]
 jobs:
-
-  build:
+  notify:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.21.6'
-
-    - name: Build
-      run: go build -v ./...
-
-    - name: Test
-      run: go test -v ./...
-
     - name: Google Chat Notification
-      uses: Co-qn/google-chat-notification@releases/v1
+      uses: CommonMarvel/google-chat-notification@v1.1.1
       with:
-        name: Build
         url: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
-        status: ${{ job.status }}
-      if: always()
