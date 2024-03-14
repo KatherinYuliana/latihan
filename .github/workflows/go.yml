@@ -31,7 +31,7 @@ jobs:
       uses: katexochen/go-tidy-check@v2
       with:
         # (Optional) The path to the root of each modules, space separated. Default is the current directory.
-        modules: . ./latihan
+        # modules: . ./latihan
         # (Optional) Check submodules. This will use a go.work file if present, otherwise search subdirectories
         # for go.mod files. Default is false.
         submodules: "true"
